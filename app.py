@@ -2,7 +2,7 @@ from boggle import Boggle
 from flask import Flask, request, render_template, redirect, jsonify
 from flask import session, make_response
 from flask_debugtoolbar import DebugToolbarExtension
-from functions import is_word_in_file
+
 
 app = Flask(__name__)
 
@@ -20,7 +20,8 @@ def boggle_begin():
 
     session["board"] = []
     session["board"] = boggle_game.make_board()
-
+    session["score"] = 0
+    session["guessed_words"] = []
     return redirect("/boggle")
 
 
@@ -38,6 +39,25 @@ def check_word():
     """Check if word is valid"""
 
     word = request.args.get("word")
+
+    if word in session["guessed_words"]:
+        result = "You already found this one!"
+        return jsonify({"message": result, "score": session["score"]})
+
     result = boggle_game.check_valid_word(session["board"], word)
 
-    return jsonify({"message": result})
+    if result == "ok":
+        session["guessed_words"].append(word)
+
+        if session["score"]:
+            session["score"] += score_word(word)
+
+        else:
+            session["score"] = score_word(word)
+
+    return jsonify({"message": result, "score": session["score"]})
+
+
+def score_word(word):
+    """Give guessed word a score based on number of characters"""
+    return len(word)

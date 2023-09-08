@@ -2,7 +2,7 @@
 for row in board %}
 <p>{% for character in row %} {{character}} {% endfor %}</p>
 {% endfor %}
-<form id="guess-form" method="POST">
+<form id="guess-form" novalidate>
   <input
     type="text"
     name="word"
@@ -13,4 +13,6 @@ for row in board %}
   <button>Submit</button>
 </form>
 <div id="responseDiv"></div>
+<div id="scoreDiv"></div>
+<div id="timerDiv"></div>
 {% endblock %}
