@@ -22,16 +22,18 @@ def boggle_begin():
     session["board"] = boggle_game.make_board()
     session["score"] = 0
     session["guessed_words"] = []
-    return redirect("/boggle")
-
-
-@app.route("/boggle")
-def boggle_main():
-    """Main page where Boggle is played"""
-
     board = session["board"]
-
     return render_template("boggle.html", board=board)
+    # return redirect("/boggle")
+
+
+# @app.route("/boggle")
+# def boggle_main():
+#    """Main page where Boggle is played"""
+#
+ #   board = session["board"]
+#
+ #   return render_template("boggle.html", board=board)
 
 
 @app.route("/validate", methods=["GET"])
@@ -55,9 +57,16 @@ def check_word():
         else:
             session["score"] = score_word(word)
 
-    return jsonify({"message": result, "score": session["score"]})
+    return jsonify({"message": result, "score": session["score"], "playCount": session["playCount"]})
 
 
 def score_word(word):
     """Give guessed word a score based on number of characters"""
     return len(word)
+
+
+@app.route("/record_playcount", methods=["POST"])
+def record_playcount():
+    session["playCount"] = request.json['playCount']
+    response = {"message": "Play count recorded successfully"}
+    return jsonify(response), 200
